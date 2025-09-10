@@ -70,8 +70,3 @@ A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbe
 ## Customization
 - Edit `main.py` to change polling interval or API endpoints.
 - Style or extend `frontend/index.html` for more advanced visualizations.
-
----
-
-## License
-MIT
