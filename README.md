@@ -56,10 +56,10 @@ A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbe
 ## File Structure
 ```
 ├── backend/
-│   │── main.py                # FastAPI backend
-│   └── requirements.txt       # Python dependencies
-├── frontend/
-│   └── index.html         # Real-time dashboard UI
+│   │── main.py            # FastAPI backend
+│   └── requirements.txt   # Python dependencies
+└── frontend/
+    └── index.html         # Real-time dashboard UI
 ```
 
 ---
