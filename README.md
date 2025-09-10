@@ -1,6 +1,6 @@
 # Hertzbeat Real-Time Monitoring App
 
-A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbeat.com/) and Python FastAPI. The frontend is built with HTML, CSS, and JavaScript for instant metric updates.
+A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbeat.apache.org/) and Python FastAPI. The frontend is built with HTML, CSS, and JavaScript for instant metric updates.
 
 ---
 
@@ -15,14 +15,14 @@ A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbe
 ## Prerequisites
 - Python 3.12+
 - Node.js (optional, only if you want to use npm for frontend tooling)
-- Apache Hertzbeat running locally ([Quick Start Guide](https://hertzbeat.com/docs/quick-start/))
+- Apache Hertzbeat running locally ([Quick Start Guide](https://hertzbeat.apache.org/docs/))
 
 ---
 
 ## Setup Instructions
 
 ### 1. Start Apache Hertzbeat
-- Download and run Hertzbeat as per the [official docs](https://hertzbeat.com/docs/quick-start/).
+- Download and run Hertzbeat as per the [official docs](https://hertzbeat.apache.org/docs/).
 - Ensure the REST API is available at `http://localhost:1157`.
 
 ### 2. Backend Setup (FastAPI)
@@ -37,10 +37,6 @@ A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbe
 2. Start the FastAPI server:
    ```bash
    python main.py
-   ```
-   OR
-   ```bash
-   uvicorn main:app --reload
    ```
    - The backend will run at `http://localhost:8000`.
    - WebSocket endpoints:
