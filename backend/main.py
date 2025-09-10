@@ -19,7 +19,7 @@ app.add_middleware(
 # Simulate real-time metrics for 3 demo servers
 async def fetch_metrics():
     demo_monitors = []
-    for i in range(1, 4):
+    for i in range(1, 6):
         demo_monitors.append({
             "id": i,
             "name": f"Server-{i}",
@@ -42,7 +42,7 @@ async def websocket_metrics(websocket: WebSocket):
         while True:
             metrics = await fetch_metrics()
             await websocket.send_json(metrics)
-            await asyncio.sleep(2)
+            await asyncio.sleep(5)
     except WebSocketDisconnect:
         print("Metrics WebSocket client disconnected")
 
@@ -65,7 +65,7 @@ async def websocket_random(websocket: WebSocket):
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             await websocket.send_json(data)
-            await asyncio.sleep(3)
+            await asyncio.sleep(5)
     except WebSocketDisconnect:
         print("Random WebSocket client disconnected")
 

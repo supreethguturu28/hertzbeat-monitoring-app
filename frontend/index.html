@@ -6,7 +6,7 @@
     <title>Real-Time Monitoring Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f6fa; margin: 0; padding: 0; }
-    .container { max-width: 1300px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 32px; }
+    .container { max-width: 1500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 32px; }
     .panels-row {
         display: flex;
         justify-content: space-between;
@@ -54,7 +54,23 @@
         th, td { padding: 8px 10px; border-bottom: 1px solid #444; text-align: left; }
         th { background: #222; color: #fff; }
         td { background: #333; color: #e0e0e0; }
-        .event { font-weight: bold; }
+        .event-log {
+            background: #181c20;
+            color: #e0e0e0;
+            font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+            font-size: 1rem;
+            border-radius: 6px;
+            padding: 12px;
+            height: 320px;
+            overflow-y: auto;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+            margin-bottom: 0;
+        }
+        .event {
+            font-weight: normal;
+            white-space: pre;
+            margin-bottom: 2px;
+        }
         .alert-ALERT { color: #e67e22; }
         .alert-ERROR { color: #e74c3c; }
         .alert-INFO { color: #2ecc71; }
@@ -88,7 +104,7 @@
             <div class="panel-container">
                 <div class="panel-title">Live Events & Alerts</div>
                 <div class="status" id="randomStatus">Connecting...</div>
-                <div id="randomEvents"></div>
+                <div id="randomEvents" class="event-log"></div>
             </div>
         </div>
     </div>
@@ -138,10 +154,10 @@
         function renderRandomEvent(data) {
             const div = document.createElement('div');
             div.className = `event alert-${data.event}`;
-            div.innerHTML = `<span>[${data.timestamp}]</span> <span>${data.event}</span>: <span>${data.message}</span> (Value: ${data.value})`;
+            div.textContent = `[${data.timestamp}] ${data.event}: ${data.message} (Value: ${data.value})`;
             randomEvents.prepend(div);
-            // Keep only last 10 events
-            while (randomEvents.childNodes.length > 10) {
+            // Keep only last 15 events
+            while (randomEvents.childNodes.length > 15) {
                 randomEvents.removeChild(randomEvents.lastChild);
             }
         }
