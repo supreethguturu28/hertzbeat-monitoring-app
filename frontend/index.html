@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Monitoring Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6fa; margin: 0; padding: 0; }
+    .container { max-width: 1300px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 32px; }
+    .panels-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 32px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .panel-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 24px;
+        flex: 1 1 0;
+        min-width: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        max-width: 50%;
+    }
+    h1 { color: #2d3a4b; margin-bottom: 32px; text-align: center; }
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            width: 100%;
+        }
+        .ws-panel {
+            flex: 0 0 48%;
+            min-width: 0;
+            margin: 0;
+        }
+        .ws-panel.left {
+            text-align: left;
+            margin-right: auto;
+        }
+        .ws-panel.right {
+            text-align: right;
+            margin-left: auto;
+        }
+    .panel-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; color: #2d3a4b; text-align: center; }
+    .status { margin-bottom: 12px; font-weight: bold; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        th, td { padding: 8px 10px; border-bottom: 1px solid #444; text-align: left; }
+        th { background: #222; color: #fff; }
+        td { background: #333; color: #e0e0e0; }
+        .event { font-weight: bold; }
+        .alert-ALERT { color: #e67e22; }
+        .alert-ERROR { color: #e74c3c; }
+        .alert-INFO { color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Monitoring Dashboard</h1>
+        <div class="panels-row">
+            <div class="panel-container">
+                <div class="panel-title">Server Metrics</div>
+                <div class="status" id="status">Connecting...</div>
+                <table id="metricsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Host</th>
+                            <th>Port</th>
+                            <th>CPU (%)</th>
+                            <th>Memory (GB)</th>
+                            <th>Disk (GB)</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="metricsBody">
+                        <tr><td colspan="8">Waiting for data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-container">
+                <div class="panel-title">Live Events & Alerts</div>
+                <div class="status" id="randomStatus">Connecting...</div>
+                <div id="randomEvents"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const status = document.getElementById('status');
+        const metricsBody = document.getElementById('metricsBody');
+        const randomStatus = document.getElementById('randomStatus');
+        const randomEvents = document.getElementById('randomEvents');
+        let ws, wsRandom;
+
+        function renderMetrics(data) {
+            if (!Array.isArray(data)) {
+                metricsBody.innerHTML = `<tr><td colspan="8">${JSON.stringify(data, null, 2)}</td></tr>`;
+                return;
+            }
+            let html = '';
+            data.forEach(item => {
+                html += `<tr>
+                    <td>${item.name || '-'}</td>
+                    <td>${item.host || '-'}</td>
+                    <td>${item.port || '-'}</td>
+                    <td>${item.metrics.cpu}</td>
+                    <td>${item.metrics.memory}</td>
+                    <td>${item.metrics.disk}</td>
+                    <td>${item.metrics.status}</td>
+                    <td>${item.metrics.last_updated}</td>
+                </tr>`;
+            });
+            metricsBody.innerHTML = html;
+        }
+
+        function connect() {
+            ws = new WebSocket('ws://localhost:8000/ws/metrics');
+            ws.onopen = () => { status.textContent = 'Metrics WS Connected'; };
+            ws.onclose = () => { status.textContent = 'Disconnected. Reconnecting...'; setTimeout(connect, 2000); };
+            ws.onerror = () => { status.textContent = 'Error. Reconnecting...'; ws.close(); };
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    renderMetrics(data);
+                } catch (e) {
+                    metricsBody.innerHTML = `<tr><td colspan="8">${event.data}</td></tr>`;
+                }
+            };
+        }
+
+        function renderRandomEvent(data) {
+            const div = document.createElement('div');
+            div.className = `event alert-${data.event}`;
+            div.innerHTML = `<span>[${data.timestamp}]</span> <span>${data.event}</span>: <span>${data.message}</span> (Value: ${data.value})`;
+            randomEvents.prepend(div);
+            // Keep only last 10 events
+            while (randomEvents.childNodes.length > 10) {
+                randomEvents.removeChild(randomEvents.lastChild);
+            }
+        }
+
+        function connectRandom() {
+            wsRandom = new WebSocket('ws://localhost:8000/ws/random');
+            wsRandom.onopen = () => { randomStatus.textContent = 'Random WS Connected'; };
+            wsRandom.onclose = () => { randomStatus.textContent = 'Random WS Disconnected. Reconnecting...'; setTimeout(connectRandom, 2000); };
+            wsRandom.onerror = () => { randomStatus.textContent = 'Random WS Error. Reconnecting...'; wsRandom.close(); };
+            wsRandom.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    renderRandomEvent(data);
+                } catch (e) {
+                    randomEvents.innerHTML = `<div>${event.data}</div>`;
+                }
+            };
+        }
+
+        connect();
+        connectRandom();
+    </script>
+</body>
+</html>
