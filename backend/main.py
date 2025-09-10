@@ -65,7 +65,7 @@ async def websocket_random(websocket: WebSocket):
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
             }
             await websocket.send_json(data)
-            await asyncio.sleep(10)
+            await asyncio.sleep(5)
     except WebSocketDisconnect:
         print("Random WebSocket client disconnected")
 

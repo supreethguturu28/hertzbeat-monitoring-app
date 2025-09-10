@@ -156,8 +156,8 @@
             div.className = `event alert-${data.event}`;
             div.textContent = `[${data.timestamp}] ${data.event}: ${data.message} (Value: ${data.value})`;
             randomEvents.prepend(div);
-            // Keep only last 50 events
-            while (randomEvents.childNodes.length > 50) {
+            // Keep only last 15 events
+            while (randomEvents.childNodes.length > 15) {
                 randomEvents.removeChild(randomEvents.lastChild);
             }
         }
