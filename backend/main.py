@@ -6,7 +6,7 @@ import random
 import time
 from loguru import logger
 
-app = FastAPI()
+app = FastAPI(title="HertzBeat Monitoring Backend", version="1.0.0")
 
 # Allow frontend to access backend
 app.add_middleware(
@@ -41,7 +41,7 @@ async def fetch_metrics():
 async def health():
     return {"status": "healthy"}
 
-@app.websocket("/ws/metrics", tags=["Metrics Events"])
+@app.websocket("/ws/metrics")
 async def websocket_metrics(websocket: WebSocket):
     await websocket.accept()
     try:
@@ -55,7 +55,7 @@ async def websocket_metrics(websocket: WebSocket):
         logger.exception("Metrics WebSocket error: " + str(e), exc_info=True)
 
 # Simulate real-time alerts/events
-@app.websocket("/ws/random", tags=["Random Events"])
+@app.websocket("/ws/random")
 async def websocket_random(websocket: WebSocket):
     await websocket.accept()
     try:
