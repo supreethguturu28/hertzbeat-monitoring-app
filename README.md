@@ -22,19 +22,57 @@ A simple real-time monitoring dashboard using [Apache Hertzbeat](https://hertzbe
 ## Setup Instructions
 
 ### 1. Start Apache Hertzbeat
-- Download and run Hertzbeat as per the [official docs](https://hertzbeat.apache.org/docs/).
+- Download and extract Hertzbeat as per the [official docs](https://hertzbeat.apache.org/docs/).
+- Navigate to the Hertzbeat `bin` directory (e.g. `path/to/apache-hertzbeat-x.x.x-bin/bin`).
+- Start Hertzbeat:
+   - On Windows:
+      ```bash
+      bin/startup.bat
+      ```
+   - On Linux/macOS:
+      ```bash
+      bin/startup.sh
+      ```
+- To stop Hertzbeat:
+   - On Windows:
+      ```bash
+      bin/shutdown.bat
+      ```
+   - On Linux/macOS:
+      ```bash
+      bin/shutdown.sh
+      ```
 - Ensure the REST API is available at `http://localhost:1157`.
 
 ### 2. Backend Setup (FastAPI)
-1. Open a terminal in the backend folder:
+#### Step-by-step Backend Setup
+
+1. **Navigate to the backend folder:**
    ```bash
-   cd c:\Users\Supreeth\codes\hertzbeat-monitoring-app\backend
+   cd path/to/hertzbeat-monitoring-app/backend
+   ```
+
+2. **Create a Python virtual environment:**
+   ```bash
    python -m venv venv
-   # Activate the virtual environment
-   source venv/bin/activate   # On Windows: venv/Scripts/activate
+   ```
+
+3. **Activate the virtual environment:**
+   - On Windows:
+     ```bash
+     source venv/Scripts/activate
+     ```
+   - On Linux/macOS:
+     ```bash
+     source venv/bin/activate
+     ```
+
+4. **Install backend dependencies:**
+   ```bash
    pip install -r requirements.txt
    ```
-2. Start the FastAPI server:
+
+5. **Start the FastAPI server:**
    ```bash
    python main.py
    ```
