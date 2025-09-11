@@ -4,6 +4,7 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import random
 import time
+from loguru import logger
 
 app = FastAPI()
 
@@ -44,7 +45,9 @@ async def websocket_metrics(websocket: WebSocket):
             await websocket.send_json(metrics)
             await asyncio.sleep(5)
     except WebSocketDisconnect:
-        print("Metrics WebSocket client disconnected")
+        logger.info("Metrics WebSocket client disconnected normally.")
+    except Exception as e:
+        logger.exception("Metrics WebSocket error: " + str(e), exc_info=True)
 
 # Simulate real-time alerts/events
 @app.websocket("/ws/random")
@@ -67,7 +70,9 @@ async def websocket_random(websocket: WebSocket):
             await websocket.send_json(data)
             await asyncio.sleep(5)
     except WebSocketDisconnect:
-        print("Random WebSocket client disconnected")
+        logger.info("Random WebSocket client disconnected normally.")
+    except Exception as e:
+        logger.exception("Random WebSocket error: " + str(e), exc_info=True)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
