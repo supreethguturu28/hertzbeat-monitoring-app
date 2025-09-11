@@ -36,6 +36,11 @@ async def fetch_metrics():
         })
     return demo_monitors
 
+# Health endpoint
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
 @app.websocket("/ws/metrics")
 async def websocket_metrics(websocket: WebSocket):
     await websocket.accept()
@@ -75,4 +80,4 @@ async def websocket_random(websocket: WebSocket):
         logger.exception("Random WebSocket error: " + str(e), exc_info=True)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
