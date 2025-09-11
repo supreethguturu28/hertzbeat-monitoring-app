@@ -37,11 +37,11 @@ async def fetch_metrics():
     return demo_monitors
 
 # Health endpoint
-@app.get("/health")
+@app.get("/health", tags=["Health"])
 async def health():
     return {"status": "healthy"}
 
-@app.websocket("/ws/metrics")
+@app.websocket("/ws/metrics", tags=["Metrics Events"])
 async def websocket_metrics(websocket: WebSocket):
     await websocket.accept()
     try:
@@ -55,7 +55,7 @@ async def websocket_metrics(websocket: WebSocket):
         logger.exception("Metrics WebSocket error: " + str(e), exc_info=True)
 
 # Simulate real-time alerts/events
-@app.websocket("/ws/random")
+@app.websocket("/ws/random", tags=["Random Events"])
 async def websocket_random(websocket: WebSocket):
     await websocket.accept()
     try:
