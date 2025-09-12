@@ -113,7 +113,7 @@
         const metricsBody = document.getElementById('metricsBody');
         const randomStatus = document.getElementById('randomStatus');
         const randomEvents = document.getElementById('randomEvents');
-        let ws, wsRandom;
+        let ws, wsLogs;
 
         function renderMetrics(data) {
             if (!Array.isArray(data)) {
@@ -137,7 +137,7 @@
         }
 
         function connect() {
-            ws = new WebSocket('wss://hertzbeat-monitoring-app.onrender.com/ws/metrics');
+            ws = new WebSocket('ws://localhost:8000/ws/metrics');
             ws.onopen = () => { status.textContent = 'Metrics WS Connected'; };
             ws.onclose = () => { status.textContent = 'Disconnected. Reconnecting...'; setTimeout(connect, 2000); };
             ws.onerror = () => { status.textContent = 'Error. Reconnecting...'; ws.close(); };
@@ -151,34 +151,31 @@
             };
         }
 
-        function renderRandomEvent(data) {
+        function renderLogMessage(logText) {
             const div = document.createElement('div');
-            div.className = `event alert-${data.event}`;
-            div.textContent = `[${data.timestamp}] ${data.event}: ${data.message} (Value: ${data.value})`;
-            randomEvents.prepend(div);
-            // Keep only last 15 events
-            while (randomEvents.childNodes.length > 15) {
-                randomEvents.removeChild(randomEvents.lastChild);
+            div.className = 'event';
+            div.textContent = logText;
+            randomEvents.appendChild(div);
+            // Keep only last 50 logs
+            while (randomEvents.childNodes.length > 50) {
+                randomEvents.removeChild(randomEvents.firstChild);
             }
+            // Auto-scroll to bottom
+            randomEvents.scrollTop = randomEvents.scrollHeight;
         }
 
-        function connectRandom() {
-            wsRandom = new WebSocket('wss://hertzbeat-monitoring-app.onrender.com/ws/random');
-            wsRandom.onopen = () => { randomStatus.textContent = 'Random WS Connected'; };
-            wsRandom.onclose = () => { randomStatus.textContent = 'Random WS Disconnected. Reconnecting...'; setTimeout(connectRandom, 2000); };
-            wsRandom.onerror = () => { randomStatus.textContent = 'Random WS Error. Reconnecting...'; wsRandom.close(); };
-            wsRandom.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    renderRandomEvent(data);
-                } catch (e) {
-                    randomEvents.innerHTML = `<div>${event.data}</div>`;
-                }
+        function connectLogs() {
+            wsLogs = new WebSocket('ws://localhost:8000/ws/logs');
+            wsLogs.onopen = () => { randomStatus.textContent = 'Logs WS Connected'; };
+            wsLogs.onclose = () => { randomStatus.textContent = 'Logs WS Disconnected. Reconnecting...'; setTimeout(connectLogs, 2000); };
+            wsLogs.onerror = () => { randomStatus.textContent = 'Logs WS Error. Reconnecting...'; wsLogs.close(); };
+            wsLogs.onmessage = (event) => {
+                renderLogMessage(event.data);
             };
         }
 
         connect();
-        connectRandom();
+        connectLogs();
     </script>
 </body>
 </html>
