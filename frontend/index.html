@@ -137,7 +137,7 @@
         }
 
         function connect() {
-            ws = new WebSocket('ws://localhost:8000/ws/metrics');
+            ws = new WebSocket('wss://hertzbeat-monitoring-app-backend.onrender.com/ws/metrics');
             ws.onopen = () => { status.textContent = 'Metrics WS Connected'; };
             ws.onclose = () => { status.textContent = 'Disconnected. Reconnecting...'; setTimeout(connect, 2000); };
             ws.onerror = () => { status.textContent = 'Error. Reconnecting...'; ws.close(); };
@@ -165,7 +165,7 @@
         }
 
         function connectLogs() {
-            wsLogs = new WebSocket('ws://localhost:8000/ws/logs');
+            wsLogs = new WebSocket('wss://hertzbeat-monitoring-app-backend.onrender.com/ws/logs');
             wsLogs.onopen = () => { randomStatus.textContent = 'Logs WS Connected'; };
             wsLogs.onclose = () => { randomStatus.textContent = 'Logs WS Disconnected. Reconnecting...'; setTimeout(connectLogs, 2000); };
             wsLogs.onerror = () => { randomStatus.textContent = 'Logs WS Error. Reconnecting...'; wsLogs.close(); };
